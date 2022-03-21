@@ -1,5 +1,5 @@
 // const { process_params } = require('express/lib/router');
-const { Pizza } = require('../models');
+const { Comment, Pizza } = require('../models');
 
 const pizzaController = {
     // the functions gwill go in here as methods
@@ -7,6 +7,15 @@ const pizzaController = {
     // GET all pizzas: GET /api/pizzas
     getAllPizza(req, res) {
         Pizza.find({})
+            .populate({
+                path: 'comments',
+                // used the select option inside of populate(), so that we can tell Mongoose that we don't care about the __v field on comments either. 
+                // The minus sign - in front of the field indicates that we don't want it to be returned.
+                select: '-__v'
+            })
+            .select('-__v')
+            // the newest pizza returns first.
+            .sort({ _id: -1 })
             .then(dbPizzaData => res.json(dbPizzaData))
             .catch(err => {
                 console.log(err);
@@ -17,6 +26,11 @@ const pizzaController = {
     // get one pizza bu id
     getPizzaById({ params }, res) {
         Pizza.findOne({ _id: params.id })
+            .populate({
+                path: 'comments',
+                select: '-__v'
+            })
+            .select('-__v')
             .then(dbPizzaData => {
                 if (!dbPizzaData) {
                     res.status(404).json({ message: 'No pizza found with this id' });

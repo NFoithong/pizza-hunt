@@ -22,7 +22,7 @@ request.onsuccess = function(event) {
     // check if app is online, if yes run uploadPizza() function to send all local db data to api
     if (navigator.online) {
         // we haven't created this yet, but we will soon, so let's comment it out for now
-        // uploadPizza();
+        uploadPizza();
     }
 };
 

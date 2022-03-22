@@ -33,8 +33,9 @@ const PizzaSchema = new Schema({
 });
 // Virtuals allow us to add more information to a database response so that we don't have to add in the information manually with a helper before responding to the API request.
 // get total count of comments and replies on retrieval
+// using the .reduce() method to tally up the total of every comment with its replies.
 PizzaSchema.virtual('commentCount').get(function() {
-    return this.comments.length;
+    return this.comments.reduce((total, comment) => total + comment.replies.length + 1, 0);
 })
 
 // create the Pizza model using the PizzaSchema

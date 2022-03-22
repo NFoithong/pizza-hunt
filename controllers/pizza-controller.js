@@ -1,5 +1,5 @@
 // const { process_params } = require('express/lib/router');
-const { Comment, Pizza } = require('../models');
+const { Pizza } = require('../models');
 
 const pizzaController = {
     // the functions gwill go in here as methods

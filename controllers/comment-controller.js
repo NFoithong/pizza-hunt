@@ -6,16 +6,8 @@ const commentController = {
         console.log(body);
         Comment.create(body)
             .then(({ _id }) => {
-                console.log(_id);
-                return Pizza.findOneAndUpdate({
-                    _id: params.pizzaId
-                }, {
-                    $push: {
-                        comments: _id
-                    }
-                }, {
-                    new: true
-                });
+                // console.log(_id);
+                return Pizza.findOneAndUpdate({ _id: params.pizzaId }, { $push: { comments: _id } }, { new: true });
             })
             .then(dbPizzaData => {
                 if (!dbPizzaData) {
@@ -24,6 +16,27 @@ const commentController = {
                 }
                 res.json(dbPizzaData);
             })
+            .catch(err => res.json(err));
+    },
+
+    // add reply to comment
+    addReply({ params, body }, res) {
+        Comment.findOneAndUpdate({ _id: params.commentId }, { $push: { replies: body } }, { new: true })
+            .then(dbPizzaData => {
+                if (!dbPizzaData) {
+                    res.status(404).json({ message: 'No pizza found with this id' });
+                    return;
+                }
+                res.json(dbPizzaData);
+            })
+            .catch(err => res.json(err));
+    },
+
+    // remove reply
+    //using the MongoDB $pull operator to remove the specific reply from the replies array where the replyId matches the value of params.replyId passed in from the route.
+    removeReply({ params }, res) {
+        Comment.findOneAndUpdate({ _id: params.commentId }, { $pull: { replies: { replyId: params.replytId } } }, { new: true })
+            .then(dbPizzaData => res.json(dbPizzaData))
             .catch(err => res.json(err));
     },
 
